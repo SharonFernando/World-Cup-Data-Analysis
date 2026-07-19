@@ -40,7 +40,7 @@ ENDPOINTS = {
 
 # Função para requisição HTTP
 
-def consulta(endpoint):
+def get_data(endpoint):
 
     resposta = requests.get(
         endpoint,
@@ -54,7 +54,7 @@ def consulta(endpoint):
     return resposta.json()
 
 # Criação do Dataframe dos fatos
-df_fixtures = pd.json_normalize(consulta(f"{BASE_URL}/fixtures")["response"])
+df_fixtures = pd.json_normalize(get_data(f"{BASE_URL}/fixtures")["response"])
 fixtures = df_fixtures[
     [
         "id",
@@ -74,7 +74,7 @@ fixtures = df_fixtures[
     ]
 ]
 
-# Criação do Dataframe da dimesão dos times/seleções
+# Criação do Dataframe da dimensão dos times/seleções
 home = df_fixtures[
     [
         "homeTeam.id",
@@ -105,7 +105,7 @@ away.columns = [
 
 teams = pd.concat([home, away]).drop_duplicates()
 
-# Criação do Dataframe da dimesão dos estádios
+# Criação do Dataframe da dimensão dos estádios
 venues = df_fixtures[
     [
         "venue.id",
@@ -122,7 +122,9 @@ venues.columns = [
 
 venues = venues.drop_duplicates()
 
-df_players = pd.json_normalize(consulta(f"{BASE_URL}/players")["response"])
+# Criação do Dataframe da dimensão dos jogadores
+df_players = pd.json_normalize(get_data(f"{BASE_URL}/players")["response"])
+
 players = df_players[
     [
         "id",
@@ -133,4 +135,51 @@ players = df_players[
         "weight"
     ]
 ]
+
 players = players.drop_duplicates()
+
+# Criação do Dataframe da dimensão das estatísticas dos jogos
+data = []
+
+for fixture in fixtures["id"][:2]:
+  response = get_data(f"{BASE_URL}/fixtures/{fixture}/statistics")["response"]
+  data.extend(response)
+
+df_fixtures_stats = pd.json_normalize(data)
+
+fixtures_stats = df_fixtures_stats[
+    [
+        "id",
+        "fixtureId",
+        "teamId",
+        "type",
+        "value"
+    ]
+]
+
+fixtures_stats = fixtures_stats.drop_duplicates()
+
+# Criação do Dataframe da dimensão dos eventos dos jogos
+data = []
+
+for fixture in fixtures["id"][:2]:
+  response = get_data(f"{BASE_URL}/fixtures/{fixture}/events")["response"]
+  data.extend(response)
+
+df_events = pd.json_normalize(data)
+
+events = df_events[
+    [
+        "id",
+        "fixtureId",
+        "time",
+        "playerId",
+        "assistId",
+        "teamId",
+        "type",
+        "detail",
+        "comments"
+    ]
+]
+
+events = events.drop_duplicates()

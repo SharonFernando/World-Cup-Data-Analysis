@@ -36,7 +36,7 @@ CREATE TABLE "fact_events" (
   "assistId" integer,
   "type" varchar(20),
   "detail" varchar(20),
-  "comment" varchar(20)
+  "comments" varchar(20)
 );
 
 CREATE TABLE "dim_players" (
@@ -48,7 +48,7 @@ CREATE TABLE "dim_players" (
   "weight" integer
 );
 
-CREATE TABLE "fact_team_statistics" (
+CREATE TABLE "fact_fixtures_statistics" (
   "id" integer PRIMARY KEY,
   "fixtureId" integer,
   "teamId" integer,
@@ -70,6 +70,6 @@ ALTER TABLE "fact_events" ADD FOREIGN KEY ("playerId") REFERENCES "dim_players" 
 
 ALTER TABLE "fact_events" ADD FOREIGN KEY ("assistId") REFERENCES "dim_players" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-ALTER TABLE "fact_team_statistics" ADD FOREIGN KEY ("fixtureId") REFERENCES "fact_fixtures" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "fact_fixtures_statistics" ADD FOREIGN KEY ("fixtureId") REFERENCES "fact_fixtures" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-ALTER TABLE "fact_team_statistics" ADD FOREIGN KEY ("teamId") REFERENCES "dim_teams" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "fact_fixtures_statistics" ADD FOREIGN KEY ("teamId") REFERENCES "dim_teams" ("id") DEFERRABLE INITIALLY IMMEDIATE;

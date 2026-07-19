@@ -73,6 +73,7 @@ venues = venues.drop_duplicates()
 
 # Criação do Dataframe da dimesão dos jogadores
 df_players = pd.json_normalize(get_data(f"{BASE_URL}/players")["response"])
+
 players = df_players[
     [
         "id",
@@ -83,4 +84,52 @@ players = df_players[
         "weight"
     ]
 ]
+
 players = players.drop_duplicates()
+
+# Criação do Dataframe da dimensão das estatísticas dos jogos
+
+data = []
+
+for fixture in fixtures["id"][:2]:
+  response = get_data(f"{BASE_URL}/fixtures/{fixture}/statistics")["response"]
+  data.extend(response)
+
+df_fixtures_stats = pd.json_normalize(data)
+
+fixtures_stats = df_fixtures_stats[
+    [
+        "id",
+        "fixtureId",
+        "teamId",
+        "type",
+        "value"
+    ]
+]
+
+fixtures_stats = fixtures_stats.drop_duplicates()
+
+# Criação do Dataframe da dimensão dos eventos dos jogos
+data = []
+
+for fixture in fixtures["id"][:2]: #limitação de quantidade de execuções para teste | API tem limite de 100 requisições ao dia
+  response = get_data(f"{BASE_URL}/fixtures/{fixture}/events")["response"]
+  data.extend(response) #.extend ao invés de .append | "extend" percorre os itens do dicionário/lista
+
+df_events = pd.json_normalize(data)
+
+events = df_events[
+    [
+        "id",
+        "fixtureId",
+        "time",
+        "playerId",
+        "assistId",
+        "teamId",
+        "type",
+        "detail",
+        "comments"
+    ]
+]
+
+events = events.drop_duplicates()
