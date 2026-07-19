@@ -20,13 +20,3 @@ PARAMS = {
     'league': 1,
     'season': 2026
 }
-
-# Dicionário com os endpoints da API
-ENDPOINTS = {
-    "fixtures": f"{BASE_URL}/fixtures",
-    "teams": f"{BASE_URL}/teams",
-    "players": f"{BASE_URL}/players",
-    "teams_statistics": f"{BASE_URL}/fixtures/{id}/statistics",
-    "events": f"{BASE_URL}/fixtures{id}/events",
-    "league": f"{BASE_URL}/leagues"
-}

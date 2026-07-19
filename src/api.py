@@ -1,10 +1,10 @@
 import requests
-from config import HEADERS, PARAMS
+from config import HEADERS, PARAMS, BASE_URL
 
 # Função para realizar as requisições HTTP
-def get_data(endpoint, params=None):
+def obter_dados(endpoint):
     response = requests.get(
-        endpoint,
+        f"{BASE_URL}/{endpoint}",
         headers=HEADERS,
         params=PARAMS,
         timeout=30
@@ -12,4 +12,4 @@ def get_data(endpoint, params=None):
 
     response.raise_for_status()
 
-    return response.json()
+    return response.json()["response"]
