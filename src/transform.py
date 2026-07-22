@@ -187,7 +187,7 @@ def criar_leagues(df_leagues):
 
 
 # Criar o dataframe das temporadas
-def criar_seasons(df_leagues)
+def criar_seasons(df_leagues):
 
     df_seasons = pd.json_normalize(df_leagues['seasons'].explode())
 
