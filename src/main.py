@@ -19,3 +19,10 @@ fixtures_stats = criar_stats(df_fixtures)
 
 # eventos
 events = criar_events(df_fixtures)
+
+# leagues
+df_leagues = carregar_endpoint("leagues")
+leagues = criar_leagues(df_leagues)
+
+# seasons
+seasons = criar_seasons(df_leagues)
