@@ -167,3 +167,40 @@ def criar_events(fixtures):
     events = events.drop_duplicates()
 
     return events
+
+# Criar dataframe das ligas/copas
+def criar_leagues(df_leagues):
+
+    leagues = df_leagues[
+        [
+            "id",
+            "name",
+            "type",
+            "logo",
+            "countryName"
+        ]
+    ]
+    
+    leagues = leagues.drop_duplicates()
+
+    return leagues
+
+
+# Criar o dataframe das temporadas
+def criar_seasons(df_leagues)
+
+    df_seasons = pd.json_normalize(df_leagues['seasons'].explode())
+
+    seasons = df_seasons[
+        [
+            "leagueId",
+            "year",
+            "start",
+            "end",
+            "current"
+        ]
+    ]
+    
+    seasons = seasons.drop_duplicates()
+    
+    return seasons
