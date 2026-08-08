@@ -1,4 +1,14 @@
-from transform import carregar_endpoint, criar_fixtures, criar_teams, criar_venues, criar_players, criar_events, criar_stats,criar_leagues, criar_seasons
+from transform import (
+    carregar_endpoint, 
+    criar_fixtures, 
+    criar_teams, 
+    criar_venues, 
+    criar_players, 
+    criar_events, 
+    criar_stats, 
+    criar_leagues, 
+    criar_seasons
+)
 
 # partidas
 df_fixtures = carregar_endpoint("fixtures")
