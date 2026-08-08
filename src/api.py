@@ -1,5 +1,9 @@
 import requests
-from config import HEADERS, PARAMS, BASE_URL
+from config import (
+    HEADERS, 
+    PARAMS, 
+    BASE_URL
+)
 
 # Função para realizar as requisições HTTP
 def obter_dados(endpoint):
