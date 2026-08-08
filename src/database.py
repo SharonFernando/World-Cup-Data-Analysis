@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, text, inspect
 from config import(
     HOST,
     PORT,
@@ -14,3 +14,7 @@ engine = create_engine(
 with engine.connect() as connection:
     result = connection.execute(text("SELECT 1"))
     print(result.scalar())
+
+inspector = inspect(engine)
+
+print(inspector.get_table_names())
