@@ -11,10 +11,12 @@ engine = create_engine(
     f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{NAME}"
 )
 
-with engine.connect() as connection:
-    result = connection.execute(text("SELECT 1"))
-    print(result.scalar())
+def load_dataframe(df, table_name):
+    df.to_sql(
+        table_name,
+        con=engine,
+        if_exists="append",
+        index=False
+    )
 
-inspector = inspect(engine)
-
-print(inspector.get_table_names())
+    print(f"{len(df)} registros inseridos em {table_name}")

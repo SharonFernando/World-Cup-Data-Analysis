@@ -44,10 +44,8 @@ CREATE TABLE "fact_events" (
 CREATE TABLE "dim_players" (
   "id" integer PRIMARY KEY,
   "name" varchar(100),
-  "age" integer,
-  "nationality" varchar(100),
-  "height" integer,
-  "weight" integer
+  "teamId" integer NOT NULL,
+  "position" varchar(50)
 );
 
 CREATE TABLE "fact_stats" (
@@ -97,3 +95,5 @@ ALTER TABLE "fact_stats" ADD FOREIGN KEY ("fixtureId") REFERENCES "fact_fixtures
 ALTER TABLE "fact_stats" ADD FOREIGN KEY ("teamId") REFERENCES "dim_teams" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "dim_seasons" ADD FOREIGN KEY ("leagueId") REFERENCES "dim_leagues" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+
+ALTER TABLE "dim_players" ADD FOREIGN KEY ("teamId") REFERENCES "dim_teams" ("id") DEFERRABLE INITIALLY IMMEDIATE;

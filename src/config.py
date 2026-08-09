@@ -27,3 +27,14 @@ PORT=os.getenv('DB_PORT')
 NAME=os.getenv('DB_NAME')
 USER=os.getenv('DB_USER')
 PASSWORD=os.getenv('DB_PASSWORD')
+
+DB_TABLES = {
+    'leagues': 'dim_leagues',
+    'seasons': 'dim_seasons',
+    'players': 'dim_players',
+    'teams': 'dim_teams',
+    'venues': 'dim_venues',
+    'events': 'fact_events',
+    'fixtures': 'fact_fixtures',
+    'fixtures_stats': 'fact_stats'
+}

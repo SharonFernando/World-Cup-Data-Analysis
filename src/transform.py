@@ -17,6 +17,7 @@ def criar_fixtures(df_fixtures):
         [
             "id",
             "date",
+            "leagueId",
             "venueId",
             "homeTeamId",
             "awayTeamId",
@@ -87,23 +88,37 @@ def criar_venues(df_fixtures):
         "city"
         ]
 
+    venues = venues.dropna(subset=["id"])
     venues = venues.drop_duplicates()
 
     return venues
 
 
 # Criar o dataframe dos jogadores
-def criar_players(df_players):
+def criar_players(teams):
 
-    players = df_players[
+    data = []
+
+    for team in teams["id"][:1]:
+        response = obter_dados(f"/squads?team={team}")#limitação de quantidade de execuções para teste | API tem limite de 100 requisições ao dia
+        data.extend(response)#.extend ao invés de .append | "extend" percorre os itens do dicionário/lista
+
+        df_squad = pd.json_normalize(data)
+
+    players = df_squad[
         [
-            "id",
-            "name",
-            "age",
-            "nationality",
-            "height",
-            "weight"
+            "playerId",
+            "player.name",
+            "teamId",
+            "position"
         ]
+    ]
+
+    players.columns = [
+        "id",
+        "name",
+        "teamId",
+        "position"
     ]
 
     players = players.drop_duplicates()
@@ -116,10 +131,10 @@ def criar_stats(fixtures):
     
     data = []
 
-    for fixture in fixtures["id"][:2]:
+    for fixture in fixtures["id"][:1]:#limitação de quantidade de execuções para teste | API tem limite de 100 requisições ao dia
 
         response = obter_dados(f"/fixtures/{fixture}/statistics")
-        data.extend(response)
+        data.extend(response)#.extend ao invés de .append | "extend" percorre os itens do dicionário/lista
 
     df_stats = pd.json_normalize(data)
 
@@ -143,7 +158,7 @@ def criar_events(fixtures):
 
     data = []
 
-    for fixture in fixtures["id"][:2]: #limitação de quantidade de execuções para teste | API tem limite de 100 requisições ao dia
+    for fixture in fixtures["id"][:1]: #limitação de quantidade de execuções para teste | API tem limite de 100 requisições ao dia
 
         response = obter_dados(f"/fixtures/{fixture}/events")
         data.extend(response) #.extend ao invés de .append | "extend" percorre os itens do dicionário/lista
@@ -196,8 +211,7 @@ def criar_seasons(df_leagues):
             "leagueId",
             "year",
             "start",
-            "end",
-            "current"
+            "end"
         ]
     ]
     
