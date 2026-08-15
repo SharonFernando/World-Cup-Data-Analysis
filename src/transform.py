@@ -1,4 +1,5 @@
 import time
+import requests
 import pandas as pd
 from api import obter_dados
 from database import get_existing_ids
@@ -122,6 +123,11 @@ def criar_players(teams):
                 f"/squads?team={team}"
             )
             data.extend(response)
+        except requests.exceptions.HTTPError as erro:
+            if erro.response is not None and erro.response.status_code == 429:
+                print("Limite de requisições da API atingido (429). Interrompendo consultas de jogadores.")
+                break
+            print(f"Falha ao consultar jogadores do time {team}: {erro}")
         except Exception as erro:
             print(f"Falha ao consultar jogadores do time {team}: {erro}")
 
@@ -186,6 +192,11 @@ def criar_stats(fixtures):
                 f"/fixtures/{fixture}/statistics"
             )
             data.extend(response)
+        except requests.exceptions.HTTPError as erro:
+            if erro.response is not None and erro.response.status_code == 429:
+                print("Limite de requisições da API atingido (429). Interrompendo consultas de estatísticas.")
+                break
+            print(f"Falha ao consultar estatísticas da fixture {fixture}: {erro}")
         except Exception as erro:
             print(f"Falha ao consultar estatísticas da fixture {fixture}: {erro}")
 
@@ -245,6 +256,11 @@ def criar_events(fixtures):
                 f"/fixtures/{fixture}/events"
             )
             data.extend(response)
+        except requests.exceptions.HTTPError as erro:
+            if erro.response is not None and erro.response.status_code == 429:
+                print("Limite de requisições da API atingido (429). Interrompendo consultas de eventos.")
+                break
+            print(f"Falha ao consultar eventos da fixture {fixture}: {erro}")
         except Exception as erro:
             print(f"Falha ao consultar eventos da fixture {fixture}: {erro}")
 

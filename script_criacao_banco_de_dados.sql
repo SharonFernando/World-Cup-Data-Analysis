@@ -3,7 +3,7 @@ CREATE TABLE "fact_fixtures" (
   "date" timestamp,
   "leagueId" integer NOT NULL,
   "seasonYear" integer NOT NULL,
-  "venueId" integer NOT NULL,
+  "venueId" integer,
   "homeTeamId" integer NOT NULL,
   "awayTeamId" integer NOT NULL,
   "goalsHome" integer,
@@ -35,7 +35,7 @@ CREATE TABLE "fact_events" (
   "time" integer,
   "teamId" integer NOT NULL,
   "playerId" integer NOT NULL,
-  "assistId" integer NOT NULL,
+  "assistId" integer,
   "type" varchar(50),
   "detail" varchar(100),
   "comments" varchar(100)
@@ -53,7 +53,7 @@ CREATE TABLE "fact_stats" (
   "fixtureId" integer NOT NULL,
   "teamId" integer NOT NULL,
   "type" varchar(50),
-  "value" integer
+  "value" varchar(50)
 );
 
 CREATE TABLE "dim_leagues" (
@@ -95,5 +95,3 @@ ALTER TABLE "fact_stats" ADD FOREIGN KEY ("fixtureId") REFERENCES "fact_fixtures
 ALTER TABLE "fact_stats" ADD FOREIGN KEY ("teamId") REFERENCES "dim_teams" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "dim_seasons" ADD FOREIGN KEY ("leagueId") REFERENCES "dim_leagues" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-
-ALTER TABLE "dim_players" ADD FOREIGN KEY ("teamId") REFERENCES "dim_teams" ("id") DEFERRABLE INITIALLY IMMEDIATE;
