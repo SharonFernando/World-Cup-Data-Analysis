@@ -12,40 +12,50 @@ from transform import (
     criar_seasons
 )
 
-# partidas
-df_fixtures = carregar_endpoint("fixtures")
-fixtures = criar_fixtures(df_fixtures)
 
-# ligas
-df_leagues = carregar_endpoint("leagues")
-leagues = criar_leagues(df_leagues)
+def main():
 
-# temporadas
-seasons = criar_seasons(df_leagues)
+    try:
+        df_fixtures = carregar_endpoint("fixtures")
+        df_leagues = carregar_endpoint("leagues")
+    except Exception as erro:
+        print(f"Falha ao consultar dados iniciais da API: {erro}")
+        return
 
-# times
-teams = criar_teams(df_fixtures)
+    # ligas
+    leagues = criar_leagues(df_leagues)
+    load_dataframe(leagues, DB_TABLES['leagues'])
 
-# estádios
-venues = criar_venues(df_fixtures)
+    # temporadas
+    seasons = criar_seasons(df_leagues)
+    load_dataframe(seasons, DB_TABLES['seasons'])
 
-# jogadores
-players = criar_players(teams)
+    # times
+    teams = criar_teams(df_fixtures)
+    load_dataframe(teams, DB_TABLES['teams'])
 
-# eventos
-events = criar_events(df_fixtures)
+    # estádios
+    venues = criar_venues(df_fixtures)
+    load_dataframe(venues, DB_TABLES['venues'])
 
-# estatísticas das partidas
-fixtures_stats = criar_stats(df_fixtures)
+    # jogadores
+    players = criar_players(teams)
+    load_dataframe(players, DB_TABLES['players'])
 
-# inserir informações no banco de dados
-load_dataframe(leagues,DB_TABLES['leagues'])
-load_dataframe(seasons,DB_TABLES['seasons'])
-load_dataframe(teams,DB_TABLES['teams'])
-load_dataframe(venues,DB_TABLES['venues'])
-load_dataframe(players,DB_TABLES['players'])
-load_dataframe(fixtures,DB_TABLES['fixtures'])
-load_dataframe(events,DB_TABLES['events'])
-load_dataframe(fixtures_stats,DB_TABLES['fixtures_stats'])
+    # partidas
+    fixtures = criar_fixtures(df_fixtures)
+    load_dataframe(fixtures, DB_TABLES['fixtures'])
 
-print("Todas as operações foram concluídas")
+    # eventos
+    events = criar_events(fixtures)
+    load_dataframe(events, DB_TABLES['events'])
+
+    # estatísticas das partidas
+    fixtures_stats = criar_stats(fixtures)
+    load_dataframe(fixtures_stats, DB_TABLES['fixtures_stats'])
+
+    print("Todas as operações foram concluídas")
+
+
+if __name__ == "__main__":
+    main()

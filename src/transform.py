@@ -1,5 +1,7 @@
+import time
 import pandas as pd
 from api import obter_dados
+from database import get_existing_ids
 
 
 # Obter as informações de um endpoint
@@ -97,13 +99,45 @@ def criar_venues(df_fixtures):
 # Criar o dataframe dos jogadores
 def criar_players(teams):
 
+    existing_team_ids = get_existing_ids(
+        "dim_players",
+        "teamId"
+    )
+
+    teams_to_request = teams[
+        ~teams["id"].isin(existing_team_ids)
+    ]
+
+    print(
+        f"Times para consultar jogadores: "
+        f"{len(teams_to_request)}"
+    )
+
     data = []
 
-    for team in teams["id"][:1]:
-        response = obter_dados(f"/squads?team={team}")#limitação de quantidade de execuções para teste | API tem limite de 100 requisições ao dia
-        data.extend(response)#.extend ao invés de .append | "extend" percorre os itens do dicionário/lista
+    for team in teams_to_request["id"]:
 
-        df_squad = pd.json_normalize(data)
+        try:
+            response = obter_dados(
+                f"/squads?team={team}"
+            )
+            data.extend(response)
+        except Exception as erro:
+            print(f"Falha ao consultar jogadores do time {team}: {erro}")
+
+        time.sleep(1)
+
+    if not data:
+        return pd.DataFrame(
+            columns=[
+                "id",
+                "name",
+                "teamId",
+                "position"
+            ]
+        )
+
+    df_squad = pd.json_normalize(data)
 
     players = df_squad[
         [
@@ -128,13 +162,45 @@ def criar_players(teams):
 
 # Criar o dataframe das estatísticas das partidas
 def criar_stats(fixtures):
-    
+
+    existing_fixture_ids = get_existing_ids(
+        "fact_stats",
+        "fixtureId"
+    )
+
+    fixtures_to_request = fixtures[
+        ~fixtures["id"].isin(existing_fixture_ids)
+    ]
+
+    print(
+        f"Fixtures para consultar estatísticas: "
+        f"{len(fixtures_to_request)}"
+    )
+
     data = []
 
-    for fixture in fixtures["id"][:1]:#limitação de quantidade de execuções para teste | API tem limite de 100 requisições ao dia
+    for fixture in fixtures_to_request["id"]:
 
-        response = obter_dados(f"/fixtures/{fixture}/statistics")
-        data.extend(response)#.extend ao invés de .append | "extend" percorre os itens do dicionário/lista
+        try:
+            response = obter_dados(
+                f"/fixtures/{fixture}/statistics"
+            )
+            data.extend(response)
+        except Exception as erro:
+            print(f"Falha ao consultar estatísticas da fixture {fixture}: {erro}")
+
+        time.sleep(1)
+
+    if not data:
+        return pd.DataFrame(
+            columns=[
+                "id",
+                "fixtureId",
+                "teamId",
+                "type",
+                "value"
+            ]
+        )
 
     df_stats = pd.json_normalize(data)
 
@@ -156,12 +222,48 @@ def criar_stats(fixtures):
 # Criar o dataframe dos eventos das partidas
 def criar_events(fixtures):
 
+    existing_fixture_ids = get_existing_ids(
+        "fact_events",
+        "fixtureId"
+    )
+
+    fixtures_to_request = fixtures[
+        ~fixtures["id"].isin(existing_fixture_ids)
+    ]
+
+    print(
+        f"Fixtures para consultar eventos: "
+        f"{len(fixtures_to_request)}"
+    )
+
     data = []
 
-    for fixture in fixtures["id"][:1]: #limitação de quantidade de execuções para teste | API tem limite de 100 requisições ao dia
+    for fixture in fixtures_to_request["id"]:
 
-        response = obter_dados(f"/fixtures/{fixture}/events")
-        data.extend(response) #.extend ao invés de .append | "extend" percorre os itens do dicionário/lista
+        try:
+            response = obter_dados(
+                f"/fixtures/{fixture}/events"
+            )
+            data.extend(response)
+        except Exception as erro:
+            print(f"Falha ao consultar eventos da fixture {fixture}: {erro}")
+
+        time.sleep(1)
+
+    if not data:
+        return pd.DataFrame(
+            columns=[
+                "id",
+                "fixtureId",
+                "time",
+                "playerId",
+                "assistId",
+                "teamId",
+                "type",
+                "detail",
+                "comments"
+            ]
+        )
 
     df_events = pd.json_normalize(data)
 
@@ -182,6 +284,7 @@ def criar_events(fixtures):
     events = events.drop_duplicates()
 
     return events
+
 
 # Criar dataframe das ligas/copas
 def criar_leagues(df_leagues):
