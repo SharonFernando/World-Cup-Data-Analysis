@@ -1,4 +1,4 @@
-from database import load_dataframe
+from database import load_dataframe, get_existing_ids, get_existing_pairs
 from config import DB_TABLES
 from transform import (
     carregar_endpoint, 
@@ -24,18 +24,28 @@ def main():
 
     # ligas
     leagues = criar_leagues(df_leagues)
+    existing_league_ids = get_existing_ids(DB_TABLES['leagues'], "id")
+    leagues = leagues[~leagues["id"].isin(existing_league_ids)]
     load_dataframe(leagues, DB_TABLES['leagues'])
 
     # temporadas
     seasons = criar_seasons(df_leagues)
+    existing_seasons = get_existing_pairs(DB_TABLES['seasons'], "leagueId", "year")
+    seasons = seasons[
+        ~seasons.apply(lambda row: (row["leagueId"], row["year"]) in existing_seasons, axis=1)
+    ]
     load_dataframe(seasons, DB_TABLES['seasons'])
 
     # times
     teams = criar_teams(df_fixtures)
-    load_dataframe(teams, DB_TABLES['teams'])
+    existing_team_ids = get_existing_ids(DB_TABLES['teams'], "id")
+    teams_to_load = teams[~teams["id"].isin(existing_team_ids)]
+    load_dataframe(teams_to_load, DB_TABLES['teams'])
 
     # estádios
     venues = criar_venues(df_fixtures)
+    existing_venue_ids = get_existing_ids(DB_TABLES['venues'], "id")
+    venues = venues[~venues["id"].isin(existing_venue_ids)]
     load_dataframe(venues, DB_TABLES['venues'])
 
     # jogadores
@@ -44,7 +54,9 @@ def main():
 
     # partidas
     fixtures = criar_fixtures(df_fixtures)
-    load_dataframe(fixtures, DB_TABLES['fixtures'])
+    existing_fixture_ids = get_existing_ids(DB_TABLES['fixtures'], "id")
+    fixtures_to_load = fixtures[~fixtures["id"].isin(existing_fixture_ids)]
+    load_dataframe(fixtures_to_load, DB_TABLES['fixtures'])
 
     # eventos
     events = criar_events(fixtures)

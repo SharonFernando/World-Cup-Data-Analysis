@@ -40,3 +40,15 @@ def get_existing_ids(table_name, column_name):
 
         return {row[0] for row in result}
 
+
+# Igual a get_existing_ids, mas para tabelas com chave composta (2 colunas)
+def get_existing_pairs(table_name, column1, column2):
+
+    query = text(
+        f'SELECT "{column1}", "{column2}" FROM {table_name}'
+    )
+
+    with engine.connect() as connection:
+        result = connection.execute(query)
+
+        return {(row[0], row[1]) for row in result}

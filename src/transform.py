@@ -185,7 +185,7 @@ def criar_stats(fixtures):
 
     data = []
 
-    for fixture in fixtures_to_request["id"]:
+    for fixture in fixtures_to_request["id"][:25]:
 
         try:
             response = obter_dados(
@@ -249,7 +249,7 @@ def criar_events(fixtures):
 
     data = []
 
-    for fixture in fixtures_to_request["id"]:
+    for fixture in fixtures_to_request["id"][:25]:
 
         try:
             response = obter_dados(
